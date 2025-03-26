@@ -20,10 +20,17 @@ in a model fitted by lavaan."></head><body>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/semboottools.html">Get started</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/hist_qq_boot_and_scatter_boot.html">hist_qq_boot_and_scatter_boot</a></li>
+    <li><a class="dropdown-item" href="../articles/parameterEstimates_boot.html">parameterEstimates_boot</a></li>
+    <li><a class="dropdown-item" href="../articles/standardizedSolution_boot.html">semboottools::standardizedSolution_boot</a></li>
+  </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/Yangzhen1999/semboottools/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -33,7 +40,7 @@ in a model fitted by lavaan."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Diagnostic Plots of Bootstrap Estimates in 'lavaan'</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/Yangzhen1999/semboottools/blob/main/R/plot_boot.R" class="external-link"><code>R/plot_boot.R</code></a></small>
       <div class="d-none name"><code>hist_qq_boot.Rd</code></div>
     </div>
 
@@ -50,19 +57,21 @@ in a model fitted by <code>lavaan</code>.</p>
 <span>  <span class="va">param</span>,</span>
 <span>  standardized <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  nclass <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  hist_color <span class="op">=</span> <span class="st">"lightgrey"</span>,</span>
-<span>  hist_linewidth <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  hist_color <span class="op">=</span> <span class="st">"#5DADE233"</span>,</span>
+<span>  hist_linewidth <span class="op">=</span> <span class="fl">1.5</span>,</span>
+<span>  hist_border_color <span class="op">=</span> <span class="st">"#1B4F72"</span>,</span>
 <span>  density_line_type <span class="op">=</span> <span class="st">"solid"</span>,</span>
-<span>  density_line_color <span class="op">=</span> <span class="st">"blue"</span>,</span>
+<span>  density_line_color <span class="op">=</span> <span class="st">"#8B0000CC"</span>,</span>
 <span>  density_line_linewidth <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  est_line_type <span class="op">=</span> <span class="st">"dotted"</span>,</span>
-<span>  est_line_color <span class="op">=</span> <span class="st">"red"</span>,</span>
+<span>  est_line_color <span class="op">=</span> <span class="st">"#154360"</span>,</span>
+<span>  est_line_type <span class="op">=</span> <span class="st">"dashed"</span>,</span>
 <span>  est_line_linewidth <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  qq_dot_size <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  qq_dot_color <span class="op">=</span> <span class="st">"black"</span>,</span>
-<span>  qq_dot_pch <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  qq_line_linewidth <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  qq_line_color <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  qq_dot_pch <span class="op">=</span> <span class="fl">21</span>,</span>
+<span>  qq_dot_color <span class="op">=</span> <span class="st">"#1B4F72"</span>,</span>
+<span>  qq_dot_fill <span class="op">=</span> <span class="st">"#5DADE233"</span>,</span>
+<span>  qq_dot_size <span class="op">=</span> <span class="fl">1.3</span>,</span>
+<span>  qq_line_color <span class="op">=</span> <span class="st">"#8B0000CC"</span>,</span>
+<span>  qq_line_linewidth <span class="op">=</span> <span class="fl">2.1</span>,</span>
 <span>  qq_line_linetype <span class="op">=</span> <span class="st">"solid"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -125,13 +134,21 @@ This argument will be passed to
 <dd><p>String. The color of the
 bars in the histogram. It will be
 passed to <code><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist()</a></code> for the argument
-<code>col</code>. Default is <code>"lightgrey"</code>.</p></dd>
+<code>col</code>. Default is light blue (<code>scales::alpha("#5DADE2", 0.2)</code>).</p></dd>
 
 
 <dt id="arg-hist-linewidth">hist_linewidth<a class="anchor" aria-label="anchor" href="#arg-hist-linewidth"></a></dt>
 <dd><p>The width of
 the borders of the bars in the
-histogram. Default is 1.</p></dd>
+histogram. Default is 1.5.</p></dd>
+
+
+<dt id="arg-hist-border-color">hist_border_color<a class="anchor" aria-label="anchor" href="#arg-hist-border-color"></a></dt>
+<dd><p>String.
+The color of the borders (outline) of the bars
+in the histogram. It will be passed to <code><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist()</a></code>
+for the argument <code>border</code>.
+Default is a dark blue color (<code>"#1B4F72"</code>).</p></dd>
 
 
 <dt id="arg-density-line-type">density_line_type<a class="anchor" aria-label="anchor" href="#arg-density-line-type"></a></dt>
@@ -160,6 +177,15 @@ passed to <code><a href="https://rdrr.io/r/graphics/lines.html" class="external-
 Default is 2.</p></dd>
 
 
+<dt id="arg-est-line-color">est_line_color<a class="anchor" aria-label="anchor" href="#arg-est-line-color"></a></dt>
+<dd><p>String. The
+color of the vertical line showing
+the point estimate in the histogram.
+It will be
+passed to <code><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline()</a></code> for the argument
+<code>col</code>.</p></dd>
+
+
 <dt id="arg-est-line-type">est_line_type<a class="anchor" aria-label="anchor" href="#arg-est-line-type"></a></dt>
 <dd><p>String. The
 type of the vertical line in the
@@ -167,17 +193,7 @@ histogram showing the point estimate
 of the parameter. It will be
 passed to <code><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline()</a></code> for the argument
 <code>lty</code>. Default is
-<code>"dotted"</code>,</p></dd>
-
-
-<dt id="arg-est-line-color">est_line_color<a class="anchor" aria-label="anchor" href="#arg-est-line-color"></a></dt>
-<dd><p>String. The
-color of the vertical line showing
-the point estimate in the histogram.
-It will be
-passed to <code><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline()</a></code> for the argument
-<code>col</code>.
-Default is <code>"red"</code>.</p></dd>
+<code>"dashed"</code>,</p></dd>
 
 
 <dt id="arg-est-line-linewidth">est_line_linewidth<a class="anchor" aria-label="anchor" href="#arg-est-line-linewidth"></a></dt>
@@ -189,6 +205,32 @@ passed to <code><a href="https://rdrr.io/r/graphics/hist.html" class="external-l
 <code>lwd</code>.  Default is 2.</p></dd>
 
 
+<dt id="arg-qq-dot-pch">qq_dot_pch<a class="anchor" aria-label="anchor" href="#arg-qq-dot-pch"></a></dt>
+<dd><p>Numeric. The shape
+of the points in the normal QQ-plot.
+It will be
+passed to <code><a href="https://rdrr.io/r/stats/qqnorm.html" class="external-link">qqnorm()</a></code> for the argument
+<code>pch</code>. Default is 21.</p></dd>
+
+
+<dt id="arg-qq-dot-color">qq_dot_color<a class="anchor" aria-label="anchor" href="#arg-qq-dot-color"></a></dt>
+<dd><p>String. The color
+of the points in the normal QQ-plot.
+It will be
+passed to <code><a href="https://rdrr.io/r/stats/qqnorm.html" class="external-link">qqnorm()</a></code> for the argument
+<code>col</code>.</p></dd>
+
+
+<dt id="arg-qq-dot-fill">qq_dot_fill<a class="anchor" aria-label="anchor" href="#arg-qq-dot-fill"></a></dt>
+<dd><p>String.
+The fill color of the points in the normal QQ-plot.
+Only applicable when <code>qq_dot_pch</code> is set to a symbol
+that allows fill color (e.g., <code>pch = 21</code>).
+It will be passed to <code><a href="https://rdrr.io/r/stats/qqnorm.html" class="external-link">qqnorm()</a></code> for the argument <code>bg</code>.
+Default is a semi-transparent light blue
+(<code>scales::alpha("#5DADE2", 0.2)</code>).</p></dd>
+
+
 <dt id="arg-qq-dot-size">qq_dot_size<a class="anchor" aria-label="anchor" href="#arg-qq-dot-size"></a></dt>
 <dd><p>The size of the
 points in the normal QQ-plot.
@@ -197,21 +239,13 @@ passed to <code><a href="https://rdrr.io/r/stats/qqnorm.html" class="external-li
 <code>cex</code>. Default is 2.</p></dd>
 
 
-<dt id="arg-qq-dot-color">qq_dot_color<a class="anchor" aria-label="anchor" href="#arg-qq-dot-color"></a></dt>
+<dt id="arg-qq-line-color">qq_line_color<a class="anchor" aria-label="anchor" href="#arg-qq-line-color"></a></dt>
 <dd><p>String. The color
-of the points in the normal QQ-plot.
+of the diagonal line to be drawn in
+the normal QQ-plot.
 It will be
-passed to <code><a href="https://rdrr.io/r/stats/qqnorm.html" class="external-link">qqnorm()</a></code> for the argument
-<code>col</code>.
-Default is <code>"black"</code>.</p></dd>
-
-
-<dt id="arg-qq-dot-pch">qq_dot_pch<a class="anchor" aria-label="anchor" href="#arg-qq-dot-pch"></a></dt>
-<dd><p>Numeric. The shape
-of the points in the normal QQ-plot.
-It will be
-passed to <code><a href="https://rdrr.io/r/stats/qqnorm.html" class="external-link">qqnorm()</a></code> for the argument
-<code>pch</code>. Default is 16.</p></dd>
+passed to <code><a href="https://rdrr.io/r/stats/qqnorm.html" class="external-link">qqline()</a></code> for the argument
+<code>col</code>.</p></dd>
 
 
 <dt id="arg-qq-line-linewidth">qq_line_linewidth<a class="anchor" aria-label="anchor" href="#arg-qq-line-linewidth"></a></dt>
@@ -220,17 +254,7 @@ of the diagonal line to be drawn in
 the normal QQ-plot.
 It will be
 passed to <code><a href="https://rdrr.io/r/stats/qqnorm.html" class="external-link">qqline()</a></code> for the argument
-<code>lwd</code>. Default is 2.</p></dd>
-
-
-<dt id="arg-qq-line-color">qq_line_color<a class="anchor" aria-label="anchor" href="#arg-qq-line-color"></a></dt>
-<dd><p>String. The color
-of the diagonal line to be drawn in
-the normal QQ-plot.
-It will be
-passed to <code><a href="https://rdrr.io/r/stats/qqnorm.html" class="external-link">qqline()</a></code> for the argument
-<code>col</code>.
-Default is <code>"black"</code>.</p></dd>
+<code>lwd</code>. Default is 2.1.</p></dd>
 
 
 <dt id="arg-qq-line-linetype">qq_line_linetype<a class="anchor" aria-label="anchor" href="#arg-qq-line-linetype"></a></dt>
