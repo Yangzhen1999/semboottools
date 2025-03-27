@@ -4,14 +4,14 @@
 \name{semboottools-package}
 \alias{semboottools}
 \alias{semboottools-package}
-\title{semboottools: Bootstrapping Helpers For Structural Equation Modelling}
+\title{semboottools: Bootstrapping Helpers for Structural Equation Modelling}
 \description{
 A collection of helper functions for forming bootstrapping confidence intervals and examining bootstrap estimates in structural equation modelling. Currently supports models fitted by the 'lavaan' package by Rosseel (2012) \doi{ 10.18637/jss.v048.i02}.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://Yangzhen1999.github.io/semboottools}
+  \item \url{https://Yangzhen1999.github.io/semboottools/}
   \item Report bugs at \url{https://github.com/Yangzhen1999/semboottools/issues}
 }
 

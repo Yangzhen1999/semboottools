@@ -1,6 +1,6 @@
 Package: semboottools
-Title: Bootstrapping Helpers For Structural Equation Modelling
-Version: 0.0.0.9012
+Title: Bootstrapping Helpers for Structural Equation Modelling
+Version: 0.1.0
 Authors@R:
     c(person(given = "Wendie",
              family ="Yang",
@@ -33,6 +33,6 @@ Imports:
     lavaan,
     psych,
     lavaan.printer
-URL: https://Yangzhen1999.github.io/semboottools
+URL: https://Yangzhen1999.github.io/semboottools/
 BugReports: https://github.com/Yangzhen1999/semboottools/issues
 
