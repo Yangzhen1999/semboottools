@@ -1,12 +1,13 @@
 pandoc: 3.1.11
-pkgdown: 2.1.1
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
-  hist_qq_boot_and_scatter_boot: hist_qq_boot_and_scatter_boot.html
+  gg_hist_qq_boot_and_gg_scatter_boot: gg_hist_qq_boot_and_gg_scatter_boot.html
+  jab_after_boot: jab_after_boot.html
   parameterEstimates_boot: parameterEstimates_boot.html
   semboottools: semboottools.html
   standardizedSolution_boot: standardizedSolution_boot.html
-last_built: 2025-04-03T01:27Z
+last_built: 2025-09-13T00:24Z
 urls:
   reference: https://Yangzhen1999.github.io/semboottools/reference
   article: https://Yangzhen1999.github.io/semboottools/articles
