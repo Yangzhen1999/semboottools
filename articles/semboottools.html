@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">semboottools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,20 +75,24 @@
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>This vignette demonstrates how to form bootstrapping confidence
-intervals and examining bootstrap estimates in SEM using
-semboottools.</p>
+intervals and examining bootstrap estimates in SEM using <a href="https://yangzhen1999.github.io/semboottools/" class="external-link"><code>semboottools</code></a>,
+described in <span class="citation">Yang &amp; Cheung (<a href="#ref-yang_forming_2026">2026</a>)</span>.</p>
+<p>The following packages will be used:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://Yangzhen1999.github.io/semboottools/">semboottools</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be" class="external-link">lavaan</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; This is lavaan 0.6-20</span></span>
+<span><span class="co">#&gt; This is lavaan 0.6-21</span></span>
 <span><span class="co">#&gt; lavaan is FREE software! Please report any bugs.</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="example-simple-mediation-model">Example: Simple Mediation Model<a class="anchor" aria-label="anchor" href="#example-simple-mediation-model"></a>
 </h2>
-<p>We use a simple mediation model with a large sample (N = 1000).</p>
-<p>This model includes: A predictor x, A mediator m, An outcome y.</p>
-<p>Indirect effect (ab) and total effect (total) defined.</p>
+<p>We use a simple mediation model with a large sample (N = 1000) for
+demonstration.</p>
+<p>This model includes: A predictor <code>x</code>, A mediator
+<code>m</code>, An outcome <code>y</code>.</p>
+<p>Indirect effect (<code>ab</code>) and total effect
+(<code>total</code>) are defined below.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set seed for reproducibility</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
@@ -110,10 +114,15 @@ semboottools.</p>
 <div class="section level3">
 <h3 id="fit-the-model-with-bootstrapping">Fit the Model with Bootstrapping<a class="anchor" aria-label="anchor" href="#fit-the-model-with-bootstrapping"></a>
 </h3>
+<p>Suppose we fit the model using the default method for standard errors
+and confidence intervals for model parameter:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="va">mod</span>, data <span class="op">=</span> <span class="va">dat</span>, fixed.x <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span>, ci <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; lavaan 0.6-20 ended normally after 6 iterations</span></span>
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="va">mod</span>,</span>
+<span>           data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>           fixed.x <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span>        ci <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; lavaan 0.6-21 ended normally after 6 iterations</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   Estimator                                         ML</span></span>
 <span><span class="co">#&gt;   Optimization method                           NLMINB</span></span>
@@ -149,25 +158,41 @@ semboottools.</p>
 <span><span class="co">#&gt; Defined Parameters:</span></span>
 <span><span class="co">#&gt;                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper</span></span>
 <span><span class="co">#&gt;     ab                0.017    0.020    0.857    0.392   -0.022    0.056</span></span>
-<span><span class="co">#&gt;     total            -0.001    0.114   -0.009    0.993   -0.224    0.222</span></span>
-<span><span class="co"># Ensure bootstrap estimates are stored</span></span>
-<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/store_boot.html">store_boot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span> </span></code></pre></div>
+<span><span class="co">#&gt;     total            -0.001    0.114   -0.009    0.993   -0.224    0.222</span></span></code></pre></div>
+<p>For the indirect effect, we would like to use bootstrap confidence
+intervals. Instead of refitting the model, we can call
+<code><a href="../reference/store_boot.html">store_boot()</a></code> to do bootstrapping, and add the bootstrap
+estimates to the the original output. The original object can be safely
+overwritten.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Ensure bootstrap estimates are stored</span></span>
+<span><span class="co"># `R`, the number of bootstrap samples, should be ≥2000 in real studies.</span></span>
+<span><span class="co"># `parallel` should be used unless fitting the model is fast.</span></span>
+<span><span class="co"># Set `ncpus` to a larger value or omit it in real studies.</span></span>
+<span><span class="co"># `iseed` is set to make the results reproducible.</span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/store_boot.html">store_boot</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span>                  R <span class="op">=</span> <span class="fl">500</span>,</span>
+<span>                  parallel <span class="op">=</span> <span class="st">"snow"</span>,</span>
+<span>                  ncpus <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                  iseed <span class="op">=</span> <span class="fl">1248</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="form-bootstrap-cis-for-standardized-coefficients">Form Bootstrap CIs for Standardized Coefficients<a class="anchor" aria-label="anchor" href="#form-bootstrap-cis-for-standardized-coefficients"></a>
 </h3>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Basic usage: default settings</span></span>
 <span><span class="co"># Compute standardized solution with percentile bootstrap CIs</span></span>
 <span><span class="va">std_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in standardizedSolution_boot(fit): The number of bootstrap samples</span></span>
+<span><span class="co">#&gt; (500) is less than 'boot_pvalue_min_size' (1000). Bootstrap p-values are not</span></span>
+<span><span class="co">#&gt; computed.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">std_boot</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Bootstrapping:</span></span>
 <span><span class="co">#&gt;                                     </span></span>
-<span><span class="co">#&gt;  Valid Bootstrap Samples: 1000      </span></span>
+<span><span class="co">#&gt;  Valid Bootstrap Samples: 500       </span></span>
 <span><span class="co">#&gt;  Level of Confidence:     95.0%     </span></span>
 <span><span class="co">#&gt;  CI Type:                 Percentile</span></span>
-<span><span class="co">#&gt;  P-Value:                 Asymmetric</span></span>
 <span><span class="co">#&gt;  Standardization Type:    std.all   </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Parameter Estimates Settings:</span></span>
@@ -177,23 +202,23 @@ semboottools.</p>
 <span><span class="co">#&gt;  Information saturated (h1) model: Structured</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Regressions:</span></span>
-<span><span class="co">#&gt;                   Std    SE     p  CI.Lo CI.Up   bSE    bp bCI.Lo bCI.Up</span></span>
-<span><span class="co">#&gt;  m ~                                                                    </span></span>
-<span><span class="co">#&gt;   x (a)         0.027 0.032 0.386 -0.035 0.089 0.033 0.446 -0.037  0.089</span></span>
-<span><span class="co">#&gt;  y ~                                                                    </span></span>
-<span><span class="co">#&gt;   m (b)         0.174 0.031 0.000  0.114 0.234 0.032 0.000  0.109  0.237</span></span>
-<span><span class="co">#&gt;   x (cp)       -0.005 0.031 0.871 -0.066 0.056 0.031 0.868 -0.067  0.059</span></span>
+<span><span class="co">#&gt;                   Std    SE     p  CI.Lo CI.Up   bSE bCI.Lo bCI.Up</span></span>
+<span><span class="co">#&gt;  m ~                                                              </span></span>
+<span><span class="co">#&gt;   x (a)         0.027 0.032 0.386 -0.035 0.089 0.031 -0.041  0.078</span></span>
+<span><span class="co">#&gt;  y ~                                                              </span></span>
+<span><span class="co">#&gt;   m (b)         0.174 0.031 0.000  0.114 0.234 0.031  0.115  0.237</span></span>
+<span><span class="co">#&gt;   x (cp)       -0.005 0.031 0.871 -0.066 0.056 0.031 -0.063  0.057</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Variances:</span></span>
-<span><span class="co">#&gt;                   Std    SE     p  CI.Lo CI.Up   bSE    bp bCI.Lo bCI.Up</span></span>
-<span><span class="co">#&gt;   .m            0.999 0.002 0.000  0.996 1.003 0.002 0.000  0.992  1.000</span></span>
-<span><span class="co">#&gt;   .y            0.970 0.011 0.000  0.949 0.991 0.011 0.000  0.943  0.986</span></span>
-<span><span class="co">#&gt;    x            1.000                                                   </span></span>
+<span><span class="co">#&gt;                   Std    SE     p  CI.Lo CI.Up   bSE bCI.Lo bCI.Up</span></span>
+<span><span class="co">#&gt;   .m            0.999 0.002 0.000  0.996 1.003 0.002  0.994  1.000</span></span>
+<span><span class="co">#&gt;   .y            0.970 0.011 0.000  0.949 0.991 0.011  0.943  0.986</span></span>
+<span><span class="co">#&gt;    x            1.000                                             </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Defined Parameters:</span></span>
-<span><span class="co">#&gt;                   Std    SE     p  CI.Lo CI.Up   bSE    bp bCI.Lo bCI.Up</span></span>
-<span><span class="co">#&gt;  ab (ab)        0.005 0.006 0.391 -0.006 0.016 0.006 0.446 -0.007  0.016</span></span>
-<span><span class="co">#&gt;  total (total) -0.000 0.032 0.993 -0.062 0.062 0.032 0.994 -0.065  0.064</span></span>
+<span><span class="co">#&gt;                   Std    SE     p  CI.Lo CI.Up   bSE bCI.Lo bCI.Up</span></span>
+<span><span class="co">#&gt;  ab (ab)        0.005 0.006 0.391 -0.006 0.016 0.005 -0.008  0.014</span></span>
+<span><span class="co">#&gt;  total (total) -0.000 0.032 0.993 -0.062 0.062 0.031 -0.058  0.059</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Footnote:</span></span>
 <span><span class="co">#&gt; - Std: Standardized estimates.</span></span>
@@ -201,32 +226,36 @@ semboottools.</p>
 <span><span class="co">#&gt; - p: Delta method p-values.</span></span>
 <span><span class="co">#&gt; - CI.Lo, CI.Up: Delta method confidence intervals.</span></span>
 <span><span class="co">#&gt; - bSE: Bootstrap standard errors.</span></span>
-<span><span class="co">#&gt; - bCI.Lo, bCI.Up: Bootstrap confidence intervals.</span></span>
-<span><span class="co">#&gt; - bp: Bootstrap p-values.</span></span></code></pre></div>
+<span><span class="co">#&gt; - bCI.Lo, bCI.Up: Bootstrap confidence intervals.</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="form-bootstrap-cis-for-for-unstandardized-cofficients">Form Bootstrap CIs for for Unstandardized Cofficients<a class="anchor" aria-label="anchor" href="#form-bootstrap-cis-for-for-unstandardized-cofficients"></a>
+<h3 id="form-bootstrap-cis-for-unstandardized-coefficients">Form Bootstrap CIs for Unstandardized Coefficients<a class="anchor" aria-label="anchor" href="#form-bootstrap-cis-for-unstandardized-coefficients"></a>
 </h3>
-<p>‘parameterEstimates_boot()’ computes bootstrap CIs, standard errors,
-and optional asymmetric p-values for unstandardized parameter estimates,
-including both free and user-defined parameters.</p>
-<p>It requires bootstrap estimates stored via store_boot(), supports
-percentile and bias-corrected CIs, and outputs bootstrap SEs as the
-standard deviation of estimates.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>Although the main feature is for the standardized solution, the
+<code><a href="../reference/parameterEstimates_boot.html">parameterEstimates_boot()</a></code> can be used to compute bootstrap
+CIs, standard errors, and optional asymmetric <em>p</em>-values for
+unstandardized parameter estimates, including both free and user-defined
+parameters, when bootstrapping is conducted by
+<code><a href="../reference/store_boot.html">store_boot()</a></code>.</p>
+<p>It requires bootstrap estimates stored via <code><a href="../reference/store_boot.html">store_boot()</a></code>,
+supports percentile and bias-corrected CIs, and outputs bootstrap SEs as
+the standard deviation of estimates.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Basic usage: default settings</span></span>
 <span><span class="co"># Compute unstandardized solution with percentile bootstrap CIs</span></span>
 <span><span class="va">est_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/parameterEstimates_boot.html">parameterEstimates_boot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in parameterEstimates_boot(fit): The number of bootstrap samples (500)</span></span>
+<span><span class="co">#&gt; is less than 'boot_pvalue_min_size' (1000). Bootstrap p-values are not</span></span>
+<span><span class="co">#&gt; computed.</span></span>
 <span></span>
 <span><span class="co"># Print results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">est_boot</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Bootstrapping:</span></span>
 <span><span class="co">#&gt;                                     </span></span>
-<span><span class="co">#&gt;  Valid Bootstrap Samples: 1000      </span></span>
+<span><span class="co">#&gt;  Valid Bootstrap Samples: 500       </span></span>
 <span><span class="co">#&gt;  Level of Confidence:     95.0%     </span></span>
 <span><span class="co">#&gt;  CI Type:                 Percentile</span></span>
-<span><span class="co">#&gt;  P-Value:                 Asymmetric</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Parameter Estimates Settings:</span></span>
 <span><span class="co">#&gt;                                              </span></span>
@@ -235,31 +264,30 @@ standard deviation of estimates.</p>
 <span><span class="co">#&gt;  Information saturated (h1) model: Structured</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Regressions:</span></span>
-<span><span class="co">#&gt;                Estimate    SE     p  CI.Lo CI.Up   bSE    bp bCI.Lo bCI.Up</span></span>
-<span><span class="co">#&gt;  m ~                                                                      </span></span>
-<span><span class="co">#&gt;   x (a)           0.089 0.103 0.386 -0.113 0.291 0.108 0.446 -0.121  0.287</span></span>
-<span><span class="co">#&gt;  y ~                                                                      </span></span>
-<span><span class="co">#&gt;   m (b)           0.192 0.034 0.000  0.125 0.260 0.037 0.000  0.121  0.265</span></span>
-<span><span class="co">#&gt;   x (cp)         -0.018 0.112 0.871 -0.238 0.202 0.112 0.868 -0.240  0.214</span></span>
+<span><span class="co">#&gt;                Estimate    SE     p  CI.Lo CI.Up   bSE bCI.Lo bCI.Up</span></span>
+<span><span class="co">#&gt;  m ~                                                                </span></span>
+<span><span class="co">#&gt;   x (a)           0.089 0.103 0.386 -0.113 0.291 0.100 -0.136  0.264</span></span>
+<span><span class="co">#&gt;  y ~                                                                </span></span>
+<span><span class="co">#&gt;   m (b)           0.192 0.034 0.000  0.125 0.260 0.036  0.123  0.264</span></span>
+<span><span class="co">#&gt;   x (cp)         -0.018 0.112 0.871 -0.238 0.202 0.112 -0.228  0.205</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Variances:</span></span>
-<span><span class="co">#&gt;                Estimate    SE     p  CI.Lo CI.Up   bSE    bp bCI.Lo bCI.Up</span></span>
-<span><span class="co">#&gt;   .m              0.898 0.040 0.000  0.819 0.977 0.041 0.000  0.820  0.983</span></span>
-<span><span class="co">#&gt;   .y              1.065 0.048 0.000  0.972 1.159 0.045 0.000  0.973  1.151</span></span>
-<span><span class="co">#&gt;    x              0.085 0.004 0.000  0.077 0.092 0.002 0.000  0.080  0.089</span></span>
+<span><span class="co">#&gt;                Estimate    SE     p  CI.Lo CI.Up   bSE bCI.Lo bCI.Up</span></span>
+<span><span class="co">#&gt;   .m              0.898 0.040 0.000  0.819 0.977 0.038  0.829  0.970</span></span>
+<span><span class="co">#&gt;   .y              1.065 0.048 0.000  0.972 1.159 0.046  0.972  1.147</span></span>
+<span><span class="co">#&gt;    x              0.085 0.004 0.000  0.077 0.092 0.002  0.080  0.090</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Defined Parameters:</span></span>
-<span><span class="co">#&gt;                Estimate    SE     p  CI.Lo CI.Up   bSE    bp bCI.Lo bCI.Up</span></span>
-<span><span class="co">#&gt;  ab (ab)          0.017 0.020 0.392 -0.022 0.056 0.021 0.446 -0.025  0.059</span></span>
-<span><span class="co">#&gt;  total (total)   -0.001 0.114 0.993 -0.224 0.222 0.115 0.994 -0.229  0.225</span></span>
+<span><span class="co">#&gt;                Estimate    SE     p  CI.Lo CI.Up   bSE bCI.Lo bCI.Up</span></span>
+<span><span class="co">#&gt;  ab (ab)          0.017 0.020 0.392 -0.022 0.056 0.019 -0.028  0.053</span></span>
+<span><span class="co">#&gt;  total (total)   -0.001 0.114 0.993 -0.224 0.222 0.113 -0.211  0.213</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Footnote:</span></span>
 <span><span class="co">#&gt; - SE: Original standard errors.</span></span>
 <span><span class="co">#&gt; - p: Original p-values.</span></span>
 <span><span class="co">#&gt; - CI.Lo, CI.Up: Original confidence intervals.</span></span>
 <span><span class="co">#&gt; - bSE: Bootstrap standard errors.</span></span>
-<span><span class="co">#&gt; - bCI.Lo, bCI.Up: Bootstrap confidence intervals.</span></span>
-<span><span class="co">#&gt; - bp: Bootstrap p-values.</span></span></code></pre></div>
+<span><span class="co">#&gt; - bCI.Lo, bCI.Up: Bootstrap confidence intervals.</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="visualize-bootstrap-estimates">Visualize Bootstrap Estimates<a class="anchor" aria-label="anchor" href="#visualize-bootstrap-estimates"></a>
@@ -277,36 +305,52 @@ parameters</strong>.</p></li>
 <div class="section level4">
 <h4 id="histogram-and-qq-plot-hist_qq_boot">Histogram and QQ Plot: <code>hist_qq_boot()</code><a class="anchor" aria-label="anchor" href="#histogram-and-qq-plot-hist_qq_boot"></a>
 </h4>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># For estimates of user-defined parameters,</span></span>
-<span><span class="fu"><a href="../reference/gg_hist_qq_boot.html">gg_hist_qq_boot</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"ab"</span>, standardized <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Removed 2 rows containing missing values or values outside the scale range</span></span>
-<span><span class="co">#&gt; (`geom_bar()`).</span></span></code></pre></div>
-<p><img src="semboottools_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># For estimates in standardized solution,</span></span>
-<span><span class="fu"><a href="../reference/gg_hist_qq_boot.html">gg_hist_qq_boot</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"ab"</span>, standardized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># For estimates of user-defined parameters,</span></span>
+<span><span class="co"># unstandardized</span></span>
+<span><span class="fu"><a href="../reference/gg_hist_qq_boot.html">gg_hist_qq_boot</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span>                param <span class="op">=</span> <span class="st">"ab"</span>,</span>
+<span>                standardized <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Removed 2 rows containing missing values or values outside the scale range</span></span>
 <span><span class="co">#&gt; (`geom_bar()`).</span></span></code></pre></div>
-<p><img src="semboottools_files/figure-html/unnamed-chunk-6-2.png" width="576" style="display: block; margin: auto;"></p>
+<p><img src="semboottools_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="576" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># For estimates in standardized solution,</span></span>
+<span><span class="fu"><a href="../reference/gg_hist_qq_boot.html">gg_hist_qq_boot</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span>                param <span class="op">=</span> <span class="st">"ab"</span>,</span>
+<span>                standardized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Removed 2 rows containing missing values or values outside the scale range</span></span>
+<span><span class="co">#&gt; (`geom_bar()`).</span></span></code></pre></div>
+<p><img src="semboottools_files/figure-html/unnamed-chunk-7-2.png" class="r-plt" alt="" width="576" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="scatterplot-matrix-scatter_boot">Scatterplot Matrix: <code>scatter_boot()</code><a class="anchor" aria-label="anchor" href="#scatterplot-matrix-scatter_boot"></a>
 </h4>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># standardized solution</span></span>
-<span><span class="fu"><a href="../reference/gg_scatter_boot.html">gg_scatter_boot</a></span><span class="op">(</span><span class="va">fit</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"ab"</span><span class="op">)</span>, standardized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in ggplot2::geom_histogram(ggplot2::aes(y = ggplot2::after_stat(density)), : Ignoring unknown parameters: `size`</span></span>
-<span><span class="co">#&gt; Ignoring unknown parameters: `size`</span></span>
-<span><span class="co">#&gt; Ignoring unknown parameters: `size`</span></span></code></pre></div>
-<p><img src="semboottools_files/figure-html/unnamed-chunk-7-1.png" width="576"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># standardized solution</span></span>
+<span><span class="fu"><a href="../reference/gg_scatter_boot.html">gg_scatter_boot</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span>                param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"ab"</span><span class="op">)</span>,</span>
+<span>                standardized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="semboottools_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="576"></p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># unstandardized solution</span></span>
-<span><span class="fu"><a href="../reference/gg_scatter_boot.html">gg_scatter_boot</a></span><span class="op">(</span><span class="va">fit</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"ab"</span><span class="op">)</span>, standardized <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in ggplot2::geom_histogram(ggplot2::aes(y = ggplot2::after_stat(density)), : Ignoring unknown parameters: `size`</span></span>
-<span><span class="co">#&gt; Ignoring unknown parameters: `size`</span></span>
-<span><span class="co">#&gt; Ignoring unknown parameters: `size`</span></span></code></pre></div>
-<p><img src="semboottools_files/figure-html/unnamed-chunk-7-2.png" width="576"></p>
+<span><span class="fu"><a href="../reference/gg_scatter_boot.html">gg_scatter_boot</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span>                param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"ab"</span><span class="op">)</span>,</span>
+<span>                standardized <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="semboottools_files/figure-html/unnamed-chunk-8-2.png" class="r-plt" alt="" width="576"></p>
+</div>
+</div>
+<div class="section level3">
+<h3 class="unnumbered" id="references">Reference(s)<a class="anchor" aria-label="anchor" href="#references"></a>
+</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0" line-spacing="2">
+<div id="ref-yang_forming_2026" class="csl-entry">
+Yang, W., &amp; Cheung, S. F. (2026). Forming bootstrap confidence
+intervals and examining bootstrap distributions of standardized
+coefficients in structural equation modelling: <span>A</span> simplified
+workflow using the <span>R</span> package semboottools. <em>Behavior
+Research Methods</em>, <em>58</em>(2), 38. <a href="https://doi.org/10.3758/s13428-025-02911-z" class="external-link">https://doi.org/10.3758/s13428-025-02911-z</a>
+</div>
 </div>
 </div>
 </div>
@@ -321,7 +365,7 @@ parameters</strong>.</p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

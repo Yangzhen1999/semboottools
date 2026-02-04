@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">semboottools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,35 +71,32 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://Yangzhen1999.github.io/semboottools/">semboottools</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be" class="external-link">lavaan</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; This is lavaan 0.6-20</span></span>
-<span><span class="co">#&gt; lavaan is FREE software! Please report any bugs.</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>This vignette demonstrates two ggplot2-based utilities for
-visualizing bootstrap estimates stored/returned by
-<strong>semboottools</strong>:</p>
+<p>This vignette demonstrates two <code>ggplot2</code>-based utilities
+for visualizing bootstrap estimates stored/returned by <a href="https://yangzhen1999.github.io/semboottools/" class="external-link"><code>semboottools</code></a>
+<span class="citation">(<a href="#ref-yang_forming_2026">Yang &amp;
+Cheung, 2026</a>)</span>:</p>
 <ul>
 <li>
 <code><a href="../reference/gg_hist_qq_boot.html">gg_hist_qq_boot()</a></code>: modular histogram/density with
-optional CI, mean/boot-mean lines, SD arrow, and a side-by-side QQ
-plot.<br>
-</li>
+optional confidence intervals (CIs), mean/boot-mean lines, SD arrow, and
+a side-by-side QQ plot.</li>
 <li>
 <code><a href="../reference/gg_scatter_boot.html">gg_scatter_boot()</a></code>: a scatterplot matrix (via
 <strong>GGally</strong>) for multiple parameters’ bootstrap draws.</li>
 </ul>
 <p>Compared to base plots, these functions are <strong>modern</strong>
 (<em>ggplot2</em>) and <strong>modular</strong> (optional layers), and
-can <strong>return the ggplot objects</strong> for further
+can <strong>return the <code>ggplot</code> objects</strong> for further
 customization.</p>
-<p><strong>Dependencies:</strong> Requires <code>ggplot2</code> (and
-<code>GGally</code> for the scatterplot matrix).<br>
-Optional: <code>patchwork</code> to arrange histogram and QQ plots
-side-by-side.</p>
+<p>The following packages will be used:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://Yangzhen1999.github.io/semboottools/">semboottools</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be" class="external-link">lavaan</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; This is lavaan 0.6-21</span></span>
+<span><span class="co">#&gt; lavaan is FREE software! Please report any bugs.</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
@@ -126,37 +123,61 @@ side-by-side.</p>
 <span><span class="va">fit0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="va">model</span>, data <span class="op">=</span> <span class="va">dat</span>, fixed.x <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Store bootstrap draws</span></span>
+<span><span class="co"># `R`, the number of bootstrap samples, should be ≥2000 in real studies.</span></span>
+<span><span class="co"># `parallel` should be used unless fitting the model is fast.</span></span>
+<span><span class="co"># Set `ncpus` to a larger value or omit it in real studies.</span></span>
+<span><span class="co"># `iseed` is set to make the results reproducible.</span></span>
+<span></span>
 <span><span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/store_boot.html">store_boot</a></span><span class="op">(</span></span>
 <span>  <span class="va">fit0</span>,</span>
-<span>  R <span class="op">=</span> <span class="fl">5000</span>,</span>
-<span>  iseed <span class="op">=</span> <span class="fl">2345</span><span class="op">)</span></span></code></pre></div>
+<span>  R <span class="op">=</span> <span class="fl">500</span>,</span>
+<span>  iseed <span class="op">=</span> <span class="fl">2345</span>,</span>
+<span>  parallel <span class="op">=</span> <span class="st">"snow"</span>,</span>
+<span>  ncpus <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
-<h3 id="basic-usage-default-settings">Basic usage: default settings<a class="anchor" aria-label="anchor" href="#basic-usage-default-settings"></a>
+<h3 id="basic-usage-default-settings">Basic Usage: Default Settings<a class="anchor" aria-label="anchor" href="#basic-usage-default-settings"></a>
 </h3>
+<p>Visualizing the bootstrap estimates for the unstandardized
+solution:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/gg_hist_qq_boot.html">gg_hist_qq_boot</a></span><span class="op">(</span><span class="va">fit2</span>, param <span class="op">=</span> <span class="st">"ab"</span>, standardized <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/gg_hist_qq_boot.html">gg_hist_qq_boot</a></span><span class="op">(</span><span class="va">fit2</span>,</span>
+<span>                param <span class="op">=</span> <span class="st">"ab"</span>,</span>
+<span>                standardized <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Removed 2 rows containing missing values or values outside the scale range</span></span>
 <span><span class="co">#&gt; (`geom_bar()`).</span></span></code></pre></div>
-<p><img src="gg_hist_qq_boot_and_gg_scatter_boot_files/figure-html/unnamed-chunk-3-1.png" width="576"></p>
+<p><img src="gg_hist_qq_boot_and_gg_scatter_boot_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="576"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/gg_scatter_boot.html">gg_scatter_boot</a></span><span class="op">(</span><span class="va">fit2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ab"</span>, <span class="st">"a"</span>, <span class="st">"b"</span><span class="op">)</span>, standardized <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in ggplot2::geom_histogram(ggplot2::aes(y =</span></span>
-<span><span class="co">#&gt; ggplot2::after_stat(density)), : Ignoring unknown parameters: `size`</span></span>
-<span><span class="co">#&gt; Warning in ggplot2::geom_histogram(ggplot2::aes(y = ggplot2::after_stat(density)), : Ignoring unknown parameters: `size`</span></span>
-<span><span class="co">#&gt; Ignoring unknown parameters: `size`</span></span></code></pre></div>
-<p><img src="gg_hist_qq_boot_and_gg_scatter_boot_files/figure-html/unnamed-chunk-3-2.png" width="576"></p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/gg_scatter_boot.html">gg_scatter_boot</a></span><span class="op">(</span><span class="va">fit2</span>,</span>
+<span>                param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ab"</span>, <span class="st">"a"</span>, <span class="st">"b"</span><span class="op">)</span>,</span>
+<span>                standardized <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="gg_hist_qq_boot_and_gg_scatter_boot_files/figure-html/unnamed-chunk-3-2.png" class="r-plt" alt="" width="576"></p>
+<p>Visualizing the bootstrap estimates for the standardized
+solution:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/gg_hist_qq_boot.html">gg_hist_qq_boot</a></span><span class="op">(</span><span class="va">fit2</span>, param <span class="op">=</span> <span class="st">"ab"</span>, standardized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/gg_hist_qq_boot.html">gg_hist_qq_boot</a></span><span class="op">(</span><span class="va">fit2</span>,</span>
+<span>                param <span class="op">=</span> <span class="st">"ab"</span>,</span>
+<span>                standardized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Removed 2 rows containing missing values or values outside the scale range</span></span>
 <span><span class="co">#&gt; (`geom_bar()`).</span></span></code></pre></div>
-<p><img src="gg_hist_qq_boot_and_gg_scatter_boot_files/figure-html/unnamed-chunk-4-1.png" width="576"></p>
+<p><img src="gg_hist_qq_boot_and_gg_scatter_boot_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="576"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/gg_scatter_boot.html">gg_scatter_boot</a></span><span class="op">(</span><span class="va">fit2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ab"</span>, <span class="st">"a"</span>, <span class="st">"b"</span><span class="op">)</span>, standardized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in ggplot2::geom_histogram(ggplot2::aes(y =</span></span>
-<span><span class="co">#&gt; ggplot2::after_stat(density)), : Ignoring unknown parameters: `size`</span></span>
-<span><span class="co">#&gt; Warning in ggplot2::geom_histogram(ggplot2::aes(y = ggplot2::after_stat(density)), : Ignoring unknown parameters: `size`</span></span>
-<span><span class="co">#&gt; Ignoring unknown parameters: `size`</span></span></code></pre></div>
-<p><img src="gg_hist_qq_boot_and_gg_scatter_boot_files/figure-html/unnamed-chunk-4-2.png" width="576"></p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/gg_scatter_boot.html">gg_scatter_boot</a></span><span class="op">(</span><span class="va">fit2</span>,</span>
+<span>                param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ab"</span>, <span class="st">"a"</span>, <span class="st">"b"</span><span class="op">)</span>,</span>
+<span>                standardized <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="gg_hist_qq_boot_and_gg_scatter_boot_files/figure-html/unnamed-chunk-4-2.png" class="r-plt" alt="" width="576"></p>
+</div>
+</div>
+<div class="section level2 unnumbered">
+<h2 class="unnumbered" id="references">Reference(s)<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0" line-spacing="2">
+<div id="ref-yang_forming_2026" class="csl-entry">
+Yang, W., &amp; Cheung, S. F. (2026). Forming bootstrap confidence
+intervals and examining bootstrap distributions of standardized
+coefficients in structural equation modelling: <span>A</span> simplified
+workflow using the <span>R</span> package semboottools. <em>Behavior
+Research Methods</em>, <em>58</em>(2), 38. <a href="https://doi.org/10.3758/s13428-025-02911-z" class="external-link">https://doi.org/10.3758/s13428-025-02911-z</a>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -170,7 +191,7 @@ side-by-side.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

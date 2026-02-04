@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">semboottools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,16 +75,21 @@
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>This vignette demonstrates how to use <code><a href="../reference/jab_after_boot.html">jab_after_boot()</a></code>
-to compute <strong>Jackknife-after-Bootstrap (JAB)</strong> influence
-values for a single model parameter from a <code>lavaan</code> fit with
-stored bootstrap replicates (including<code>boot.idx</code>). The
-function summarizes the full bootstrap distribution and the
-leave-one-out (LOO) subdistributions, ranks influential observations,
-and (optionally) plots a diagnostic figure.</p>
+in the package <a href="https://yangzhen1999.github.io/semboottools/" class="external-link"><code>semboottools</code></a>
+<span class="citation">(<a href="#ref-yang_forming_2026">Yang &amp;
+Cheung, 2026</a>)</span> to compute <strong>Jackknife-after-Bootstrap
+(JAB)</strong> influence values <span class="citation">(<a href="#ref-efron_introduction_1993">Efron &amp; Tibshirani,
+1993</a>)</span> for a single model parameter from a <code>lavaan</code>
+model fitted with stored bootstrap replicates (including
+<code>boot.idx</code>). The function summarizes the full bootstrap
+distribution and the leave-one-out (LOO) subdistributions, ranks
+influential observations, and (optionally) plots a diagnostic
+figure.</p>
+<p>The following two packages are needed:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://Yangzhen1999.github.io/semboottools/">semboottools</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be" class="external-link">lavaan</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; This is lavaan 0.6-20</span></span>
+<span><span class="co">#&gt; This is lavaan 0.6-21</span></span>
 <span><span class="co">#&gt; lavaan is FREE software! Please report any bugs.</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -242,17 +247,24 @@ observation).</td>
 <span><span class="st">'</span></span>
 <span></span>
 <span><span class="co"># Fit model</span></span>
-<span><span class="va">fit0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="va">model</span>, data <span class="op">=</span> <span class="va">dat</span>, fixed.x <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">fit0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="va">model</span>,</span>
+<span>            data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>            fixed.x <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Store bootstrap draws</span></span>
+<span><span class="co"># Store bootstrap draws using `store_boot()`.</span></span>
+<span><span class="co"># `R`, the number of bootstrap samples, should be ≥2000 in real studies.</span></span>
+<span><span class="co"># `parallel` should be used unless fitting the model is fast.</span></span>
+<span><span class="co"># Set `ncpus` to a larger value or omit it in real studies.</span></span>
 <span><span class="co"># Before calling `jab_after_boot()`, you **must** re-run the model with store_boot(keep.idx = TRUE).  This is crucial: without `keep.idx = TRUE`, the bootstrap index matrix (boot.idx) will not be saved, and JAB cannot compute leave-one-out subdistributions.</span></span>
 <span></span>
 <span><span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/store_boot.html">store_boot</a></span><span class="op">(</span></span>
-<span>  <span class="va">fit0</span>,</span>
-<span>  R <span class="op">=</span> <span class="fl">5000</span>,</span>
-<span>  iseed <span class="op">=</span> <span class="fl">2345</span>,        </span>
-<span>  keep.idx <span class="op">=</span> <span class="cn">TRUE</span>           </span>
-<span><span class="op">)</span></span></code></pre></div>
+<span>          <span class="va">fit0</span>,</span>
+<span>          R <span class="op">=</span> <span class="fl">500</span>,</span>
+<span>          ncpus <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>          iseed <span class="op">=</span> <span class="fl">2345</span>,</span>
+<span>          keep.idx <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          parallel <span class="op">=</span> <span class="st">"snow"</span></span>
+<span>        <span class="op">)</span></span></code></pre></div>
 <p>When you run <code><a href="../reference/jab_after_boot.html">jab_after_boot()</a></code> with
 <code>verbose = TRUE</code>, two blocks of output are shown:</p>
 <ol style="list-style-type: decimal">
@@ -301,62 +313,77 @@ shown above.</p></li>
 <code class="sourceCode R"><span><span class="co"># Run JAB analysis for b</span></span>
 <span><span class="va">res1</span> <span class="op">&lt;-</span> <span class="fu">semboottools</span><span class="fu">::</span><span class="fu"><a href="../reference/jab_after_boot.html">jab_after_boot</a></span><span class="op">(</span></span>
 <span>  <span class="va">fit2</span>,</span>
-<span>  param        <span class="op">=</span> <span class="st">"b"</span>,       </span>
+<span>  param        <span class="op">=</span> <span class="st">"b"</span>,</span>
 <span>  standardized <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  top_k        <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  plot         <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  plot_engine  <span class="op">=</span> <span class="st">"ggplot2"</span>,</span>
 <span>  font_family  <span class="op">=</span> <span class="st">"sans"</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in standardizedSolution_boot(fit): The number of bootstrap samples</span></span>
+<span><span class="co">#&gt; (500) is less than 'boot_pvalue_min_size' (1000). Bootstrap p-values are not</span></span>
+<span><span class="co">#&gt; computed.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; === Full-sample bootstrap summary (ALL) ===</span></span>
 <span><span class="co">#&gt;  scope param      mean         SE     CI.Lo     CI.Up</span></span>
-<span><span class="co">#&gt;    ALL     b 0.3377757 0.07087301 0.1941315 0.4714736</span></span>
+<span><span class="co">#&gt;    ALL     b 0.3353919 0.07295324 0.1882437 0.4732442</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; === Leave-one-out (LOO) summaries ===</span></span>
 <span><span class="co">#&gt;  case JAB_value      mean         SE     CI.Lo     CI.Up</span></span>
-<span><span class="co">#&gt;    92 -7.265716 0.3014471 0.06691697 0.1675634 0.4262696</span></span>
-<span><span class="co">#&gt;   137  4.284467 0.3591980 0.07043389 0.2110645 0.4911241</span></span>
-<span><span class="co">#&gt;    81 -4.052481 0.3175133 0.06999906 0.1731859 0.4480780</span></span>
-<span><span class="co">#&gt;   193  3.876416 0.3571577 0.06899989 0.2152160 0.4887382</span></span>
-<span><span class="co">#&gt;   127 -3.873037 0.3184105 0.07269465 0.1762345 0.4551080</span></span></code></pre></div>
-<p><img src="jab_after_boot_files/figure-html/unnamed-chunk-3-1.png" width="576"></p>
+<span><span class="co">#&gt;    92 -7.236989 0.2992069 0.06719392 0.1601469 0.4404296</span></span>
+<span><span class="co">#&gt;   127 -5.245944 0.3091622 0.07280845 0.1738193 0.4557513</span></span>
+<span><span class="co">#&gt;   137  5.022650 0.3605051 0.07053184 0.2181614 0.4885032</span></span>
+<span><span class="co">#&gt;   193  4.354088 0.3571623 0.06866697 0.2336293 0.4726764</span></span>
+<span><span class="co">#&gt;    81 -3.720797 0.3167879 0.07265659 0.1599793 0.4421728</span></span></code></pre></div>
+<p><img src="jab_after_boot_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="576"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Run JAB analysis for ab</span></span>
 <span><span class="va">res2</span> <span class="op">&lt;-</span> <span class="fu">semboottools</span><span class="fu">::</span><span class="fu"><a href="../reference/jab_after_boot.html">jab_after_boot</a></span><span class="op">(</span></span>
 <span>  <span class="va">fit2</span>,</span>
-<span>  param        <span class="op">=</span> <span class="st">"ab"</span>,       </span>
+<span>  param        <span class="op">=</span> <span class="st">"ab"</span>,</span>
 <span>  standardized <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  top_k        <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  plot         <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in standardizedSolution_boot(fit): The number of bootstrap samples</span></span>
+<span><span class="co">#&gt; (500) is less than 'boot_pvalue_min_size' (1000). Bootstrap p-values are not</span></span>
+<span><span class="co">#&gt; computed.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; === Full-sample bootstrap summary (ALL) ===</span></span>
-<span><span class="co">#&gt;  scope param       mean         SE       CI.Lo     CI.Up</span></span>
-<span><span class="co">#&gt;    ALL    ab 0.02248262 0.02801863 -0.03249827 0.0801279</span></span>
+<span><span class="co">#&gt;  scope param       mean         SE       CI.Lo      CI.Up</span></span>
+<span><span class="co">#&gt;    ALL    ab 0.02205182 0.02836564 -0.03085612 0.08256031</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; === Leave-one-out (LOO) summaries ===</span></span>
-<span><span class="co">#&gt;  case  JAB_value       mean         SE       CI.Lo      CI.Up</span></span>
-<span><span class="co">#&gt;   137  2.0694700 0.03282997 0.02927190 -0.02581250 0.08970996</span></span>
-<span><span class="co">#&gt;    78  1.7594344 0.03127979 0.02776399 -0.02456933 0.08757414</span></span>
-<span><span class="co">#&gt;   123 -1.5161302 0.01490197 0.02800061 -0.04028824 0.06810769</span></span>
-<span><span class="co">#&gt;    86 -1.2273696 0.01634577 0.02687397 -0.03770233 0.06672054</span></span>
-<span><span class="co">#&gt;    81  1.1724804 0.02834502 0.02614015 -0.02180055 0.08551743</span></span>
-<span><span class="co">#&gt;   114 -0.9656210 0.01765451 0.02747352 -0.03468617 0.07179822</span></span>
-<span><span class="co">#&gt;   113 -0.9207178 0.01787903 0.02811111 -0.03733626 0.07244217</span></span>
-<span><span class="co">#&gt;    23  0.9070081 0.02701766 0.02802264 -0.02655530 0.08500396</span></span>
-<span><span class="co">#&gt;    71  0.9052507 0.02700887 0.02817719 -0.02667212 0.08719627</span></span>
-<span><span class="co">#&gt;    95  0.8340024 0.02665263 0.02756542 -0.02685990 0.08404846</span></span></code></pre></div>
-<p><img src="jab_after_boot_files/figure-html/unnamed-chunk-3-2.png" width="576"></p>
+<span><span class="co">#&gt;  case JAB_value       mean         SE       CI.Lo      CI.Up</span></span>
+<span><span class="co">#&gt;    78  1.873696 0.03142030 0.02904378 -0.02800619 0.08832053</span></span>
+<span><span class="co">#&gt;   137  1.818879 0.03114621 0.02997415 -0.02577827 0.08691811</span></span>
+<span><span class="co">#&gt;    81  1.660960 0.03035662 0.02688429 -0.01906004 0.08456067</span></span>
+<span><span class="co">#&gt;   114 -1.510883 0.01449740 0.02490139 -0.03477090 0.06215709</span></span>
+<span><span class="co">#&gt;    86 -1.505124 0.01452620 0.02802819 -0.03009688 0.06687608</span></span>
+<span><span class="co">#&gt;    74  1.354431 0.02882397 0.02732577 -0.02041622 0.08386695</span></span>
+<span><span class="co">#&gt;   196 -1.179388 0.01615488 0.02713066 -0.03780784 0.07084059</span></span>
+<span><span class="co">#&gt;    92  1.150002 0.02780183 0.02605886 -0.01506608 0.08439113</span></span>
+<span><span class="co">#&gt;     5  1.134956 0.02772660 0.02609942 -0.01818235 0.08226761</span></span>
+<span><span class="co">#&gt;   123 -1.056503 0.01676930 0.02749477 -0.03331698 0.07272497</span></span></code></pre></div>
+<p><img src="jab_after_boot_files/figure-html/unnamed-chunk-3-2.png" class="r-plt" alt="" width="576"></p>
 </div>
-<div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<div class="section level2 unnumbered">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<ul>
-<li>Efron, B., &amp; Tibshirani, R. J. (1993). <em>An Introduction to
-the Bootstrap</em>. Chapman &amp; Hall.</li>
-</ul>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0" line-spacing="2">
+<div id="ref-efron_introduction_1993" class="csl-entry">
+Efron, B., &amp; Tibshirani, R. (1993). <em>An <span>Introduction</span>
+to the bootstrap</em>. Chapman &amp; Hall/CRC.
+</div>
+<div id="ref-yang_forming_2026" class="csl-entry">
+Yang, W., &amp; Cheung, S. F. (2026). Forming bootstrap confidence
+intervals and examining bootstrap distributions of standardized
+coefficients in structural equation modelling: <span>A</span> simplified
+workflow using the <span>R</span> package semboottools. <em>Behavior
+Research Methods</em>, <em>58</em>(2), 38. <a href="https://doi.org/10.3758/s13428-025-02911-z" class="external-link">https://doi.org/10.3758/s13428-025-02911-z</a>
+</div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -369,7 +396,7 @@ the Bootstrap</em>. Chapman &amp; Hall.</li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

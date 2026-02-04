@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">semboottools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,10 +71,16 @@
 
     
     
+<p>This vignette is a quick guide to use
+<code><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot()</a></code> in the package <a href="https://yangzhen1999.github.io/semboottools/" class="external-link"><code>semboottools</code></a>,
+described in <span class="citation">Yang &amp; Cheung (<a href="#ref-yang_forming_2026">2026</a>)</span>, to form bootstrap
+confidence intervals for the standardized solution in a model fitted by
+<code>lavaan</code>.</p>
+<p>The following two packages are needed:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://Yangzhen1999.github.io/semboottools/">semboottools</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be" class="external-link">lavaan</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; This is lavaan 0.6-20</span></span>
+<span><span class="co">#&gt; This is lavaan 0.6-21</span></span>
 <span><span class="co">#&gt; lavaan is FREE software! Please report any bugs.</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="function-syntax">Function Syntax<a class="anchor" aria-label="anchor" href="#function-syntax"></a>
@@ -183,22 +189,32 @@ asymmetric <em>p</em>-values. If fewer samples are available,
 <span><span class="st">'</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="basic-usage-default-settings">Basic usage: default settings<a class="anchor" aria-label="anchor" href="#basic-usage-default-settings"></a>
+<h3 id="basic-usage-default-settings">Basic Usage: Default Settings<a class="anchor" aria-label="anchor" href="#basic-usage-default-settings"></a>
 </h3>
+<p>The function <code><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot()</a></code> can be used
+directly when bootstrap standard errors and confidence intervals are
+requested when fitting the model (using <code>se = "boot"</code>):</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># (should use ≥2000 in real studies)</span></span>
-<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="va">mod</span>, data <span class="op">=</span> <span class="va">dat</span>, se <span class="op">=</span> <span class="st">"boot"</span>, bootstrap <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: lavaan-&gt;lav_model_nvcov_bootstrap():  </span></span>
-<span><span class="co">#&gt;    1 bootstrap runs failed or did not converge.</span></span>
+<code class="sourceCode R"><span><span class="co"># `bootstrap` should use ≥2000 in real studies.</span></span>
+<span><span class="co"># `parallel` should be used unless fitting the model is fast.</span></span>
+<span><span class="co"># Set `ncpus` to a larger value or omit it in real studies.</span></span>
+<span><span class="co"># `iseed` is set to make the results reproducible.</span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="va">mod</span>,</span>
+<span>           data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>           se <span class="op">=</span> <span class="st">"boot"</span>,</span>
+<span>           bootstrap <span class="op">=</span> <span class="fl">500</span>,</span>
+<span>           parallel <span class="op">=</span> <span class="st">"snow"</span>,</span>
+<span>           ncpus <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>           iseed <span class="op">=</span> <span class="fl">1248</span><span class="op">)</span></span>
 <span><span class="va">std_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in standardizedSolution_boot(fit): The number of bootstrap samples</span></span>
-<span><span class="co">#&gt; (499) is less than 'boot_pvalue_min_size' (1000). Bootstrap p-values are not</span></span>
+<span><span class="co">#&gt; (500) is less than 'boot_pvalue_min_size' (1000). Bootstrap p-values are not</span></span>
 <span><span class="co">#&gt; computed.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">std_boot</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Bootstrapping:</span></span>
 <span><span class="co">#&gt;                                     </span></span>
-<span><span class="co">#&gt;  Valid Bootstrap Samples: 499       </span></span>
+<span><span class="co">#&gt;  Valid Bootstrap Samples: 500       </span></span>
 <span><span class="co">#&gt;  Level of Confidence:     95.0%     </span></span>
 <span><span class="co">#&gt;  CI Type:                 Percentile</span></span>
 <span><span class="co">#&gt;  Standardization Type:    std.all   </span></span>
@@ -207,26 +223,26 @@ asymmetric <em>p</em>-values. If fewer samples are available,
 <span><span class="co">#&gt;                                                 </span></span>
 <span><span class="co">#&gt;  Standard errors:                      Bootstrap</span></span>
 <span><span class="co">#&gt;  Number of requested bootstrap draws:  500      </span></span>
-<span><span class="co">#&gt;  Number of successful bootstrap draws: 499      </span></span>
+<span><span class="co">#&gt;  Number of successful bootstrap draws: 500      </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Regressions:</span></span>
 <span><span class="co">#&gt;                   Std    SE     p  CI.Lo CI.Up   bSE bCI.Lo bCI.Up</span></span>
 <span><span class="co">#&gt;  m ~                                                              </span></span>
-<span><span class="co">#&gt;   x (a)         0.027 0.034 0.425 -0.040 0.095 0.035 -0.047  0.088</span></span>
+<span><span class="co">#&gt;   x (a)         0.027 0.031 0.370 -0.033 0.087 0.031 -0.042  0.079</span></span>
 <span><span class="co">#&gt;  y ~                                                              </span></span>
-<span><span class="co">#&gt;   m (b)         0.174 0.032 0.000  0.111 0.237 0.032  0.108  0.237</span></span>
-<span><span class="co">#&gt;   x (cp)       -0.005 0.032 0.873 -0.067 0.057 0.032 -0.068  0.059</span></span>
+<span><span class="co">#&gt;   m (b)         0.174 0.031 0.000  0.112 0.235 0.031  0.115  0.237</span></span>
+<span><span class="co">#&gt;   x (cp)       -0.005 0.031 0.870 -0.066 0.056 0.031 -0.063  0.057</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Variances:</span></span>
 <span><span class="co">#&gt;                   Std    SE     p  CI.Lo CI.Up   bSE bCI.Lo bCI.Up</span></span>
-<span><span class="co">#&gt;   .m            0.999 0.002 0.000  0.996 1.003 0.002  0.992  1.000</span></span>
-<span><span class="co">#&gt;   .y            0.970 0.011 0.000  0.948 0.992 0.011  0.944  0.986</span></span>
+<span><span class="co">#&gt;   .m            0.999 0.002 0.000  0.996 1.003 0.002  0.994  1.000</span></span>
+<span><span class="co">#&gt;   .y            0.970 0.011 0.000  0.948 0.991 0.011  0.943  0.986</span></span>
 <span><span class="co">#&gt;    x            1.000                                             </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Defined Parameters:</span></span>
 <span><span class="co">#&gt;                   Std    SE     p  CI.Lo CI.Up   bSE bCI.Lo bCI.Up</span></span>
-<span><span class="co">#&gt;  ab (ab)        0.005 0.006 0.427 -0.007 0.017 0.006 -0.008  0.017</span></span>
-<span><span class="co">#&gt;  total (total) -0.000 0.033 0.993 -0.065 0.064 0.033 -0.066  0.065</span></span>
+<span><span class="co">#&gt;  ab (ab)        0.005 0.005 0.371 -0.006 0.015 0.005 -0.008  0.014</span></span>
+<span><span class="co">#&gt;  total (total) -0.000 0.031 0.993 -0.062 0.061 0.031 -0.059  0.059</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Footnote:</span></span>
 <span><span class="co">#&gt; - Std: Standardized estimates.</span></span>
@@ -235,10 +251,34 @@ asymmetric <em>p</em>-values. If fewer samples are available,
 <span><span class="co">#&gt; - CI.Lo, CI.Up: Delta method confidence intervals.</span></span>
 <span><span class="co">#&gt; - bSE: Bootstrap standard errors.</span></span>
 <span><span class="co">#&gt; - bCI.Lo, bCI.Up: Bootstrap confidence intervals.</span></span></code></pre></div>
+<p>If bootstrap standard errors are not requested when fitting the
+model, call <code><a href="../reference/store_boot.html">store_boot()</a></code> first. It does the following:</p>
+<ul>
+<li><p>Does bootstrapping using <code><a href="https://rdrr.io/pkg/lavaan/man/bootstrap.html" class="external-link">bootstrapLavaan()</a></code>.</p></li>
+<li><p>Stores the bootstrap estimates in the object and returns it. This
+object can be used as an usual <code>lavaan</code> output
+object.</p></li>
+</ul>
+<p>This method is useful when both the default standard errors and
+<em>p</em>-values, such as those by maximum likelihood (ML), and the
+bootstrap standard errors and <em>p</em>-values are desired.</p>
+<p>The function <code><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot()</a></code> can then be
+used directly on the output of <code><a href="../reference/store_boot.html">store_boot()</a></code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># this function also do not require 'se = "boot"' when fitting the model</span></span>
-<span><span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="va">mod</span>, data <span class="op">=</span> <span class="va">dat</span>, fixed.x <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/store_boot.html">store_boot</a></span><span class="op">(</span><span class="va">fit2</span>, R <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># The function `store_boot` also does not require</span></span>
+<span><span class="co"># 'se = "boot"' when fitting the model.</span></span>
+<span><span class="co"># `R`, the number of bootstrap samples, should be ≥2000 in real studies.</span></span>
+<span><span class="co"># `parallel` should be used unless fitting the model is fast.</span></span>
+<span><span class="co"># Set `ncpus` to a larger value or omit it in real studies.</span></span>
+<span><span class="co"># `iseed` is set to make the results reproducible.</span></span>
+<span><span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="va">mod</span>,</span>
+<span>            data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>            fixed.x <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/store_boot.html">store_boot</a></span><span class="op">(</span><span class="va">fit2</span>,</span>
+<span>                   R <span class="op">=</span> <span class="fl">500</span>,</span>
+<span>                   parallel <span class="op">=</span> <span class="st">"snow"</span>,</span>
+<span>                   ncpus <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                   iseed <span class="op">=</span> <span class="fl">1248</span><span class="op">)</span></span>
 <span><span class="va">std_boot2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot</a></span><span class="op">(</span><span class="va">fit2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in standardizedSolution_boot(fit2): The number of bootstrap samples</span></span>
 <span><span class="co">#&gt; (500) is less than 'boot_pvalue_min_size' (1000). Bootstrap p-values are not</span></span>
@@ -247,7 +287,7 @@ asymmetric <em>p</em>-values. If fewer samples are available,
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Bootstrapping:</span></span>
 <span><span class="co">#&gt;                                     </span></span>
-<span><span class="co">#&gt;  Valid Bootstrap Samples: 499       </span></span>
+<span><span class="co">#&gt;  Valid Bootstrap Samples: 500       </span></span>
 <span><span class="co">#&gt;  Level of Confidence:     95.0%     </span></span>
 <span><span class="co">#&gt;  CI Type:                 Percentile</span></span>
 <span><span class="co">#&gt;  Standardization Type:    std.all   </span></span>
@@ -256,26 +296,26 @@ asymmetric <em>p</em>-values. If fewer samples are available,
 <span><span class="co">#&gt;                                                 </span></span>
 <span><span class="co">#&gt;  Standard errors:                      Bootstrap</span></span>
 <span><span class="co">#&gt;  Number of requested bootstrap draws:  500      </span></span>
-<span><span class="co">#&gt;  Number of successful bootstrap draws: 499      </span></span>
+<span><span class="co">#&gt;  Number of successful bootstrap draws: 500      </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Regressions:</span></span>
 <span><span class="co">#&gt;                   Std    SE     p  CI.Lo CI.Up   bSE bCI.Lo bCI.Up</span></span>
 <span><span class="co">#&gt;  m ~                                                              </span></span>
-<span><span class="co">#&gt;   x (a)         0.027 0.034 0.425 -0.040 0.095 0.035 -0.047  0.088</span></span>
+<span><span class="co">#&gt;   x (a)         0.027 0.031 0.370 -0.033 0.087 0.031 -0.042  0.079</span></span>
 <span><span class="co">#&gt;  y ~                                                              </span></span>
-<span><span class="co">#&gt;   m (b)         0.174 0.032 0.000  0.111 0.237 0.032  0.108  0.237</span></span>
-<span><span class="co">#&gt;   x (cp)       -0.005 0.032 0.873 -0.067 0.057 0.032 -0.068  0.059</span></span>
+<span><span class="co">#&gt;   m (b)         0.174 0.031 0.000  0.112 0.235 0.031  0.115  0.237</span></span>
+<span><span class="co">#&gt;   x (cp)       -0.005 0.031 0.870 -0.066 0.056 0.031 -0.063  0.057</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Variances:</span></span>
 <span><span class="co">#&gt;                   Std    SE     p  CI.Lo CI.Up   bSE bCI.Lo bCI.Up</span></span>
-<span><span class="co">#&gt;   .m            0.999 0.002 0.000  0.996 1.003 0.002  0.992  1.000</span></span>
-<span><span class="co">#&gt;   .y            0.970 0.011 0.000  0.948 0.992 0.011  0.944  0.986</span></span>
+<span><span class="co">#&gt;   .m            0.999 0.002 0.000  0.996 1.003 0.002  0.994  1.000</span></span>
+<span><span class="co">#&gt;   .y            0.970 0.011 0.000  0.948 0.991 0.011  0.943  0.986</span></span>
 <span><span class="co">#&gt;    x            1.000                                             </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Defined Parameters:</span></span>
 <span><span class="co">#&gt;                   Std    SE     p  CI.Lo CI.Up   bSE bCI.Lo bCI.Up</span></span>
-<span><span class="co">#&gt;  ab (ab)        0.005 0.006 0.427 -0.007 0.017 0.006 -0.008  0.017</span></span>
-<span><span class="co">#&gt;  total (total) -0.000 0.033 0.993 -0.065 0.064 0.033 -0.066  0.065</span></span>
+<span><span class="co">#&gt;  ab (ab)        0.005 0.005 0.371 -0.006 0.015 0.005 -0.008  0.014</span></span>
+<span><span class="co">#&gt;  total (total) -0.000 0.031 0.993 -0.062 0.061 0.031 -0.059  0.059</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Footnote:</span></span>
 <span><span class="co">#&gt; - Std: Standardized estimates.</span></span>
@@ -288,40 +328,70 @@ asymmetric <em>p</em>-values. If fewer samples are available,
 <div class="section level3">
 <h3 id="standardizedsolution_boot-different-options">standardizedSolution_boot(): Different Options<a class="anchor" aria-label="anchor" href="#standardizedsolution_boot-different-options"></a>
 </h3>
+<p>Additional options to customize the output of
+<code><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot()</a></code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Change confidence level</span></span>
-<span><span class="va">std_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot</a></span><span class="op">(</span><span class="va">fit</span>, level <span class="op">=</span> <span class="fl">0.99</span><span class="op">)</span></span>
+<span><span class="va">std_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span>                                      level <span class="op">=</span> <span class="fl">0.99</span><span class="op">)</span></span>
 <span><span class="co"># Use bias-corrected bootstrap CIs</span></span>
-<span><span class="va">std_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot</a></span><span class="op">(</span><span class="va">fit</span>, boot_ci_type <span class="op">=</span> <span class="st">"bc"</span><span class="op">)</span></span>
-<span><span class="va">std_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot</a></span><span class="op">(</span><span class="va">fit</span>, boot_ci_type <span class="op">=</span> <span class="st">"bca.simple"</span><span class="op">)</span></span>
+<span><span class="va">std_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span>                                      boot_ci_type <span class="op">=</span> <span class="st">"bc"</span><span class="op">)</span></span>
+<span><span class="va">std_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span>                                      boot_ci_type <span class="op">=</span> <span class="st">"bca.simple"</span><span class="op">)</span></span>
 <span><span class="co"># Compute delta ratio</span></span>
-<span><span class="va">std_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot</a></span><span class="op">(</span><span class="va">fit</span>, boot_delta_ratio <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">std_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span>                                      boot_delta_ratio <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co"># Do not save bootstrap estimates</span></span>
-<span><span class="va">std_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot</a></span><span class="op">(</span><span class="va">fit</span>, save_boot_est_std <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">std_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span>                                      save_boot_est_std <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co"># Turn off asymmetric bootstrap p-values</span></span>
-<span><span class="va">std_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot</a></span><span class="op">(</span><span class="va">fit</span>, boot_pvalue <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">std_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span>                                      boot_pvalue <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co"># Combine options</span></span>
 <span><span class="va">std_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot</a></span><span class="op">(</span><span class="va">fit</span>,</span>
 <span>                                      boot_ci_type <span class="op">=</span> <span class="st">"bc"</span>,</span>
 <span>                                      boot_delta_ratio <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="print-different-options">print(): Different Options<a class="anchor" aria-label="anchor" href="#print-different-options"></a>
+<h3 id="print-options">print(): Options<a class="anchor" aria-label="anchor" href="#print-options"></a>
 </h3>
+<p>Additional options to customize the printout of the output of
+<code><a href="../reference/standardizedSolution_boot.html">standardizedSolution_boot()</a></code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Print standardized solution in friendly format</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">std_boot</span>, output <span class="op">=</span> <span class="st">"text"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">std_boot</span>,</span>
+<span>      output <span class="op">=</span> <span class="st">"text"</span><span class="op">)</span></span>
 <span><span class="co"># Print with more decimal places (e.g., 5 decimal digits)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">std_boot</span>, nd <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">std_boot</span>,</span>
+<span>      nd <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co"># Print only bootstrap confidence intervals</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">std_boot</span>, boot_ci_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">std_boot</span>,</span>
+<span>      boot_ci_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co"># Print both unstandardized and standardized solution</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">std_boot</span>, standardized_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">std_boot</span>,</span>
+<span>      standardized_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co"># Combine options: more decimals + show both solutions</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">std_boot</span>, nd <span class="op">=</span> <span class="fl">4</span>, standardized_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">std_boot</span>,</span>
+<span>      nd <span class="op">=</span> <span class="fl">4</span>, standardized_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co"># Combine options: show only bootstrap CI, 5 decimal places</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">std_boot</span>, boot_ci_only <span class="op">=</span> <span class="cn">TRUE</span>, nd <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">std_boot</span>,</span>
+<span>      boot_ci_only <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>      nd <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2 unnumbered">
+<h2 class="unnumbered" id="references">Reference(s)<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0" line-spacing="2">
+<div id="ref-yang_forming_2026" class="csl-entry">
+Yang, W., &amp; Cheung, S. F. (2026). Forming bootstrap confidence
+intervals and examining bootstrap distributions of standardized
+coefficients in structural equation modelling: <span>A</span> simplified
+workflow using the <span>R</span> package semboottools. <em>Behavior
+Research Methods</em>, <em>58</em>(2), 38. <a href="https://doi.org/10.3758/s13428-025-02911-z" class="external-link">https://doi.org/10.3758/s13428-025-02911-z</a>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -335,7 +405,7 @@ asymmetric <em>p</em>-values. If fewer samples are available,
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
