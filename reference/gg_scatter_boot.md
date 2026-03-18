@@ -51,7 +51,7 @@ gg_scatter_boot(
 
 - params:
 
-  Character vector of parameter names to plot (≥ 2).
+  Character vector of parameter names to plot ( \>= 2).
 
 - standardized:
 

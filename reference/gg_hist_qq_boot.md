@@ -137,7 +137,7 @@ gg_hist_qq_boot(
 
 - dens_adjust:
 
-  Numeric ≥ 0. Bandwidth adjust for
+  Numeric \>= 0. Bandwidth adjust for
   [`stats::density()`](https://rdrr.io/r/stats/density.html). Default
   `1`.
 
